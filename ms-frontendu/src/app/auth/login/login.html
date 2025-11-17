@@ -1,13 +1,11 @@
+<!-- src/app/auth/login/login.html -->
 <div class="min-h-screen bg-slate-100 flex items-center justify-center px-4">
   <div class="w-full max-w-md">
     <!-- Tarjeta -->
-    <div
-      class="bg-white shadow-xl rounded-2xl border border-slate-200 overflow-hidden"
-    >
+    <div class="bg-white shadow-xl rounded-2xl border border-slate-200 overflow-hidden">
+
       <!-- Header -->
-      <div
-        class="bg-gradient-to-r from-indigo-500 via-sky-500 to-teal-500 px-6 py-4"
-      >
+      <div class="bg-gradient-to-r from-indigo-600 via-sky-500 to-teal-500 px-6 py-4">
         <h1 class="text-lg font-semibold text-white">
           Sistema de Matrículas
         </h1>
@@ -56,16 +54,28 @@
             >
               Contraseña
             </label>
-            <input
-              id="password"
-              type="password"
-              name="password"
-              [(ngModel)]="password"
-              class="w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-800
-                     placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:bg-white"
-              placeholder="••••••••"
-              autocomplete="current-password"
-            />
+
+            <div class="relative">
+              <input
+                id="password"
+                [type]="showPassword ? 'text' : 'password'"
+                name="password"
+                [(ngModel)]="password"
+                class="w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 pr-10 text-sm text-slate-800
+                       placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:bg-white"
+                placeholder="••••••••"
+                autocomplete="current-password"
+              />
+
+              <!-- Botón ver/ocultar -->
+              <button
+                type="button"
+                (click)="togglePassword()"
+                class="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600 text-xs"
+              >
+                {{ showPassword ? 'Ocultar' : 'Ver' }}
+              </button>
+            </div>
           </div>
 
           <!-- Botón -->

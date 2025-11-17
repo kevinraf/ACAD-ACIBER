@@ -9,7 +9,11 @@ import {environment} from '../../environments/environment';
 })
 export class SesionesService {
 
-  private baseUrl = `${environment.apiUrl}/sesiones`;
+  // ANTES:
+  // private baseUrl = `${environment.apiUrl}/sesiones`;
+
+  // AHORA: pasar por el gateway con prefijo /internet
+  private baseUrl = `${environment.apiUrl}/internet/sesiones`;
 
   constructor(private http: HttpClient) {}
 

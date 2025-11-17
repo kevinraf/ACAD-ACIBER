@@ -26,6 +26,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(
                         "/auth/login",
                         "/auth/create",
+                        "/auth/validate",   // 👈 AÑADIR ESTO
                         "/v3/api-docs/**",
                         "/doc/**",
                         "/h2-console/**",

@@ -1,3 +1,4 @@
+// src/app/auth/login/login.ts
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../auth';
@@ -16,16 +17,21 @@ export class Login implements OnInit {
   error: string | null = null;
   currentYear = new Date().getFullYear();
 
+  showPassword = false;
+
   constructor(
     private authService: AuthService,
     private router: Router
   ) {}
 
   ngOnInit(): void {
-    // Si ya hay token, manda directo al dashboard
     if (this.authService.isLoggedIn()) {
       this.router.navigate(['/dashboard']);
     }
+  }
+
+  togglePassword(): void {
+    this.showPassword = !this.showPassword;
   }
 
   onSubmit(): void {

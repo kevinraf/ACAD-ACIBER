@@ -1,3 +1,4 @@
+// src/app/app-module.ts
 import { NgModule, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
@@ -22,7 +23,9 @@ import { authInterceptor } from './core/auth-interceptor';
   ],
   providers: [
     provideBrowserGlobalErrorListeners(),
-    provideHttpClient(withInterceptors([authInterceptor]))
+    provideHttpClient(
+      withInterceptors([authInterceptor]) // 👈 aquí va la función
+    )
   ],
   bootstrap: [App]
 })
