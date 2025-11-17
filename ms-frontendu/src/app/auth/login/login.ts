@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../auth';
 
@@ -8,19 +8,27 @@ import { AuthService } from '../auth';
   templateUrl: './login.html',
   styleUrl: './login.scss',
 })
-export class Login {
+export class Login implements OnInit {
 
   userName = '';
   password = '';
   loading = false;
   error: string | null = null;
+  currentYear = new Date().getFullYear();
 
   constructor(
     private authService: AuthService,
     private router: Router
   ) {}
 
-  onSubmit() {
+  ngOnInit(): void {
+    // Si ya hay token, manda directo al dashboard
+    if (this.authService.isLoggedIn()) {
+      this.router.navigate(['/dashboard']);
+    }
+  }
+
+  onSubmit(): void {
     if (!this.userName || !this.password) {
       this.error = 'Ingrese usuario y contraseña';
       return;
@@ -35,9 +43,14 @@ export class Login {
         this.router.navigate(['/dashboard']);
       },
       error: (err) => {
-        this.loading = false;
-        this.error = 'Usuario o contraseña incorrectos';
         console.error(err);
+        this.loading = false;
+
+        if (err.status === 400 || err.status === 401) {
+          this.error = 'Usuario o contraseña incorrectos';
+        } else {
+          this.error = 'Ocurrió un error al iniciar sesión';
+        }
       }
     });
   }

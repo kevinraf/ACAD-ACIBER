@@ -1,31 +1,97 @@
-<div class="login-container">
-  <h2>Sistema de Matrículas</h2>
+<div class="min-h-screen bg-slate-100 flex items-center justify-center px-4">
+  <div class="w-full max-w-md">
+    <!-- Tarjeta -->
+    <div
+      class="bg-white shadow-xl rounded-2xl border border-slate-200 overflow-hidden"
+    >
+      <!-- Header -->
+      <div
+        class="bg-gradient-to-r from-indigo-500 via-sky-500 to-teal-500 px-6 py-4"
+      >
+        <h1 class="text-lg font-semibold text-white">
+          Sistema de Matrículas
+        </h1>
+        <p class="text-xs text-indigo-100">
+          Inicia sesión para gestionar alumnos, matrículas y pagos.
+        </p>
+      </div>
 
-  <form (ngSubmit)="onSubmit()">
-    <div class="form-group">
-      <label for="userName">Usuario</label>
-      <input
-        id="userName"
-        type="text"
-        name="userName"
-        [(ngModel)]="userName"
-      />
+      <!-- Contenido -->
+      <div class="px-6 py-6 space-y-5">
+        <!-- Mensaje de error -->
+        <div
+          *ngIf="error"
+          class="flex items-start gap-2 rounded-lg bg-red-50 border border-red-200 px-3 py-2 text-xs text-red-700"
+        >
+          <span class="mt-0.5">⚠</span>
+          <span>{{ error }}</span>
+        </div>
+
+        <form (ngSubmit)="onSubmit()" novalidate class="space-y-4">
+          <!-- Usuario -->
+          <div class="space-y-1.5">
+            <label
+              for="userName"
+              class="block text-xs font-medium text-slate-600"
+            >
+              Usuario
+            </label>
+            <input
+              id="userName"
+              type="text"
+              name="userName"
+              [(ngModel)]="userName"
+              class="w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-800
+                     placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:bg-white"
+              placeholder="Ingresa tu usuario"
+              autocomplete="username"
+            />
+          </div>
+
+          <!-- Contraseña -->
+          <div class="space-y-1.5">
+            <label
+              for="password"
+              class="block text-xs font-medium text-slate-600"
+            >
+              Contraseña
+            </label>
+            <input
+              id="password"
+              type="password"
+              name="password"
+              [(ngModel)]="password"
+              class="w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 text-sm text-slate-800
+                     placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-sky-500 focus:bg-white"
+              placeholder="••••••••"
+              autocomplete="current-password"
+            />
+          </div>
+
+          <!-- Botón -->
+          <button
+            type="submit"
+            [disabled]="loading"
+            class="mt-2 inline-flex w-full items-center justify-center rounded-lg
+                   bg-sky-600 px-4 py-2.5 text-sm font-medium text-white
+                   hover:bg-sky-700 disabled:bg-slate-300 disabled:text-slate-600
+                   transition-colors"
+          >
+            <span *ngIf="!loading">Ingresar</span>
+            <span *ngIf="loading" class="inline-flex items-center gap-2">
+              <span
+                class="h-3 w-3 rounded-full border-2 border-white border-t-transparent animate-spin"
+              ></span>
+              Ingresando...
+            </span>
+          </button>
+        </form>
+      </div>
+
+      <!-- Footer -->
+      <div class="px-6 pb-4 text-[11px] text-center text-slate-400">
+        © {{ currentYear }} – Sistema de Matrículas UPeU
+      </div>
     </div>
-
-    <div class="form-group">
-      <label for="password">Contraseña</label>
-      <input
-        id="password"
-        type="password"
-        name="password"
-        [(ngModel)]="password"
-      />
-    </div>
-
-    <button type="submit" [disabled]="loading">
-      {{ loading ? 'Ingresando...' : 'Ingresar' }}
-    </button>
-
-    <p class="error" *ngIf="error">{{ error }}</p>
-  </form>
+  </div>
 </div>

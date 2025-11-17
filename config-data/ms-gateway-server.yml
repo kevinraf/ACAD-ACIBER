@@ -29,19 +29,20 @@ spring:
 
 
       routes:
-        # === Auth (público) ===
-        - id: ms-auth-public-auth
+        - id: ms-auth
           uri: lb://ms-auth
           predicates:
-            - Path=/auth/login, /auth/create
+            - Path=/auth/login,/auth/create
           filters:
             - StripPrefix=0
 
-        # === INTERNET: DOCS/H2 PÚBLICO ===
+
+
+          # === INTERNET: DOCS/H2 PÚBLICO ===
         - id: ms-internet-docs
           uri: lb://ms-internet
           predicates:
-            - Path=/internet/v3/api-docs, /internet/doc/**, /internet/h2-console/**
+            - Path=/internet/v3/api-docs,/internet/doc/**,/internet/h2-console/**
           filters:
             - StripPrefix=1
 
@@ -58,7 +59,7 @@ spring:
         - id: ms-pago-docs
           uri: lb://ms-pago
           predicates:
-            - Path=/pago/v3/api-docs, /pago/doc/**, /pago/h2-console/**
+            - Path=/pago/v3/api-docs,/pago/doc/**,/pago/h2-console/**
           filters:
             - StripPrefix=1
 
