@@ -20,4 +20,7 @@ export interface Sesion {
   pagoId?: number;
   estadoPago?: string;
   pagado?: boolean;
+
+  // 🔹 segundos transcurridos en tiempo real (solo frontend)
+  elapsedSeconds?: number;
 }

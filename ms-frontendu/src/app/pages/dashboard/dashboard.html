@@ -86,12 +86,19 @@
             <th class="px-3 py-2 text-center font-semibold text-slate-600">Asignado</th>
             <th class="px-3 py-2 text-center font-semibold text-slate-600">Consumido</th>
             <th class="px-3 py-2 text-center font-semibold text-slate-600">Restante</th>
+
+            <!-- 🔹 NUEVA COLUMNA -->
+            <th class="px-3 py-2 text-center font-semibold text-slate-600">
+              Tiempo real
+            </th>
+
             <th class="px-3 py-2 text-center font-semibold text-slate-600">Estado sesión</th>
             <th class="px-3 py-2 text-center font-semibold text-slate-600">Pago</th>
             <th class="px-3 py-2 text-right font-semibold text-slate-600">Total (S/)</th>
             <th class="px-3 py-2 text-center font-semibold text-slate-600">Acciones</th>
           </tr>
           </thead>
+
           <tbody>
           <tr
             *ngFor="let s of sesiones"
@@ -126,6 +133,13 @@
               class="px-3 py-2 text-center text-xs font-semibold"
               [ngClass]="s.minutosRestantes <= 5 ? 'text-red-500' : 'text-emerald-600'">
               {{ s.minutosRestantes }} min
+            </td>
+
+            
+
+            <!-- 🔹 Tiempo real corriendo -->
+            <td class="px-3 py-2 text-center text-xs font-mono text-slate-700">
+              {{ formatElapsed(s) }}
             </td>
 
             <td class="px-3 py-2 text-center">

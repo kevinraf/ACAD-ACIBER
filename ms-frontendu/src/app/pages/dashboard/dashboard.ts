@@ -1,5 +1,5 @@
 // src/app/pages/dashboard/dashboard.ts
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from '../../auth/auth';
 import { SesionesService } from '../../core/sesiones.service';
@@ -11,7 +11,7 @@ import { Sesion } from '../../core/sesion.model';
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
 })
-export class Dashboard implements OnInit {
+export class Dashboard implements OnInit, OnDestroy {
 
   sesiones: Sesion[] = [];
   loading = false;
@@ -27,6 +27,9 @@ export class Dashboard implements OnInit {
   sesionComprobante: Sesion | null = null;
   metodoPagoModal = 'EFECTIVO';
 
+  // 🔹 Timer para tiempo real
+  private timerId: any = null;
+
   constructor(
     private authService: AuthService,
     private router: Router,
@@ -35,6 +38,13 @@ export class Dashboard implements OnInit {
 
   ngOnInit(): void {
     this.cargarSesiones();
+    this.iniciarTimerTiempoReal();
+  }
+
+  ngOnDestroy(): void {
+    if (this.timerId) {
+      clearInterval(this.timerId);
+    }
   }
 
   logout(): void {
@@ -53,6 +63,7 @@ export class Dashboard implements OnInit {
     this.sesionesService.listar().subscribe({
       next: (data) => {
         this.sesiones = data;
+        this.inicializarElapsed();
         this.loading = false;
       },
       error: (err: any) => {
@@ -63,12 +74,63 @@ export class Dashboard implements OnInit {
     });
   }
 
-  /** 🔹 Abrir modal desde botón "Finalizar" */
+  /** 🔹 Inicializa el tiempo transcurrido base según minutosConsumidos */
+  private inicializarElapsed(): void {
+    this.sesiones.forEach(s => {
+      const base = (s.minutosConsumidos || 0) * 60;
+      s.elapsedSeconds = base;
+    });
+  }
+
+  /** 🔹 Timer que cada segundo incrementa el tiempo en sesiones en curso */
+  private iniciarTimerTiempoReal(): void {
+    if (this.timerId) {
+      clearInterval(this.timerId);
+    }
+
+    this.timerId = setInterval(() => {
+      this.sesiones.forEach(s => {
+        if (s.estado === 'EN_CURSO') {
+          if (s.elapsedSeconds == null) {
+            const base = (s.minutosConsumidos || 0) * 60;
+            s.elapsedSeconds = base;
+          }
+          s.elapsedSeconds! += 1;
+        }
+      });
+    }, 1000);
+  }
+
+  /** 🔹 Formato bonito: HH:MM:SS y si pasa de 1 día: Xd HH:MM:SS */
+  formatElapsed(s: Sesion): string {
+    const total = s.elapsedSeconds != null
+      ? s.elapsedSeconds
+      : (s.minutosConsumidos || 0) * 60;
+
+    const days = Math.floor(total / 86400); // 60 * 60 * 24
+    const remDay = total % 86400;
+    const hours = Math.floor(remDay / 3600);
+    const remHour = remDay % 3600;
+    const minutes = Math.floor(remHour / 60);
+    const seconds = remHour % 60;
+
+    const hh = (hours < 10 ? '0' : '') + hours;
+    const mm = (minutes < 10 ? '0' : '') + minutes;
+    const ss = (seconds < 10 ? '0' : '') + seconds;
+
+    if (days > 0) {
+      return `${days}d ${hh}:${mm}:${ss}`;
+    }
+    return `${hh}:${mm}:${ss}`;
+  }
+
+  // ------- MODAL FINALIZAR + PAGO --------
+
   abrirModalFinalizar(s: Sesion): void {
     if (s.estado !== 'EN_CURSO') return;
     this.sesionSeleccionada = s;
     this.sesionComprobante = null;
-    this.metodoPagoModal = this.metodoPago; // toma por defecto el del header
+    this.metodoPagoModal = this.metodoPago;
     this.error = null;
     this.mostrarModalFinalizar = true;
   }
@@ -79,7 +141,6 @@ export class Dashboard implements OnInit {
     this.sesionComprobante = null;
   }
 
-  /** 🔹 Paso 1: llamar al backend para finalizar la sesión */
   ejecutarFinalizacion(): void {
     if (!this.sesionSeleccionada) return;
 
@@ -92,7 +153,7 @@ export class Dashboard implements OnInit {
           this.loading = false;
           this.sesionComprobante = sesionFinal;
           this.sesionSeleccionada = sesionFinal;
-          this.cargarSesiones(); // refresca la tabla
+          this.cargarSesiones();
         },
         error: (err: any) => {
           console.error(err);
@@ -102,7 +163,6 @@ export class Dashboard implements OnInit {
       });
   }
 
-  /** 🔹 Paso 2: Confirmar pago (llama /confirmar-pago) */
   confirmarPagoSesion(): void {
     if (!this.sesionComprobante) return;
 
