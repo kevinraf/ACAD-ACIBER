@@ -1,0 +1,31 @@
+<div class="login-container">
+  <h2>Sistema de Matrículas</h2>
+
+  <form (ngSubmit)="onSubmit()">
+    <div class="form-group">
+      <label for="userName">Usuario</label>
+      <input
+        id="userName"
+        type="text"
+        name="userName"
+        [(ngModel)]="userName"
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="password">Contraseña</label>
+      <input
+        id="password"
+        type="password"
+        name="password"
+        [(ngModel)]="password"
+      />
+    </div>
+
+    <button type="submit" [disabled]="loading">
+      {{ loading ? 'Ingresando...' : 'Ingresar' }}
+    </button>
+
+    <p class="error" *ngIf="error">{{ error }}</p>
+  </form>
+</div>
