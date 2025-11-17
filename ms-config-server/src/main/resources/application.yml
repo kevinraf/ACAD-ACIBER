@@ -7,9 +7,9 @@ spring:
     config:
       server:
         git:
-          uri: https://github.com/kevinraf/MicroServicesCiberCaffe.git # ruta del repositorio git
+          uri: https://github.com/kevinraf/ACAD-ACIBER.git # ruta del repositorio git
           searchPaths: config-data
-          default-label: main
+          default-label: master
   security:
     user:
       name: root
