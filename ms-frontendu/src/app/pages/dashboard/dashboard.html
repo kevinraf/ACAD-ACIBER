@@ -131,11 +131,12 @@
             </td>
             <td
               class="px-3 py-2 text-center text-xs font-semibold"
-              [ngClass]="s.minutosRestantes <= 5 ? 'text-red-500' : 'text-emerald-600'">
-              {{ s.minutosRestantes }} min
+              [ngClass]="remainingSeconds(s) <= 5 * 60 ? 'text-red-500' : 'text-emerald-600'">
+              {{ formatRemaining(s) }}
             </td>
 
-            
+
+
 
             <!-- 🔹 Tiempo real corriendo -->
             <td class="px-3 py-2 text-center text-xs font-mono text-slate-700">

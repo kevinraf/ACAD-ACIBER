@@ -215,4 +215,36 @@ export class Dashboard implements OnInit, OnDestroy {
       .filter(s => s.estado === 'EN_CURSO')
       .reduce((acc, s) => acc + (s.totalCalculado || 0), 0);
   }
+  // 🔹 Calcula segundos restantes en base a asignados y elapsedSeconds
+  remainingSeconds(s: Sesion): number {
+    const total = (s.minutosAsignados || 0) * 60;
+    const elapsed = s.elapsedSeconds != null
+      ? s.elapsedSeconds
+      : (s.minutosConsumidos || 0) * 60;
+
+    const remaining = total - elapsed;
+    return remaining > 0 ? remaining : 0;
+  }
+
+// 🔹 Formato HH:MM:SS (y días) para el tiempo restante
+  formatRemaining(s: Sesion): string {
+    const total = this.remainingSeconds(s);
+
+    const days = Math.floor(total / 86400); // 24*60*60
+    const remDay = total % 86400;
+    const hours = Math.floor(remDay / 3600);
+    const remHour = remDay % 3600;
+    const minutes = Math.floor(remHour / 60);
+    const seconds = remHour % 60;
+
+    const hh = (hours < 10 ? '0' : '') + hours;
+    const mm = (minutes < 10 ? '0' : '') + minutes;
+    const ss = (seconds < 10 ? '0' : '') + seconds;
+
+    if (days > 0) {
+      return `${days}d ${hh}:${mm}:${ss}`;
+    }
+    return `${hh}:${mm}:${ss}`;
+  }
+
 }
