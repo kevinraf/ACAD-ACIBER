@@ -1,4 +1,193 @@
-<h1>Dashboard</h1>
-<p>Bienvenido al sistema de matrículas y pagos.</p>
+<div class="min-h-screen bg-slate-100 flex flex-col">
+  <!-- Top bar -->
+  <header class="w-full bg-white border-b border-slate-200">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div>
+        <h1 class="text-xl font-semibold text-slate-800">
+          Panel de sesiones – Cabinas de Internet
+        </h1>
+        <p class="text-sm text-slate-500">
+          Controla qué cliente usa cada máquina, su tiempo y el estado del pago.
+        </p>
+      </div>
 
-<button (click)="logout()">Cerrar sesión</button>
+      <button
+        class="inline-flex items-center gap-2 rounded-lg bg-red-500 px-3 py-1.5 text-sm font-medium text-white hover:bg-red-600 transition"
+        (click)="logout()"
+      >
+        Cerrar sesión
+      </button>
+    </div>
+  </header>
+
+  <!-- Contenido -->
+  <main class="flex-1 w-full">
+    <div class="max-w-6xl mx-auto px-4 py-6 space-y-4">
+
+      <!-- Filtros / acciones generales -->
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 flex flex-wrap items-center justify-between gap-3">
+        <div class="space-y-1">
+          <h2 class="text-sm font-semibold text-slate-700">
+            Sesiones activas y recientes
+          </h2>
+          <p class="text-xs text-slate-500">
+            Elige el método de pago por defecto para finalizar las sesiones.
+          </p>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <div>
+            <label class="block text-xs font-medium text-slate-500 mb-1">
+              Método de pago
+            </label>
+            <select
+              [(ngModel)]="metodoPago"
+              name="metodoPagoGlobal"
+              class="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            >
+              <option *ngFor="let m of metodosPago" [value]="m">
+                {{ m }}
+              </option>
+            </select>
+          </div>
+
+          <button
+            class="rounded-lg border border-slate-300 px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-50"
+            (click)="cargarSesiones()"
+          >
+            Refrescar
+          </button>
+        </div>
+      </div>
+
+      <!-- Mensajes de estado -->
+      <div *ngIf="loading" class="text-sm text-slate-600">
+        Cargando sesiones...
+      </div>
+
+      <div *ngIf="error" class="text-sm text-red-500">
+        {{ error }}
+      </div>
+
+      <!-- Tabla de sesiones -->
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+        <table class="min-w-full text-sm">
+          <thead class="bg-slate-50 border-b border-slate-200">
+          <tr>
+            <th class="px-3 py-2 text-left font-semibold text-slate-600">Código</th>
+            <th class="px-3 py-2 text-left font-semibold text-slate-600">Máquina</th>
+            <th class="px-3 py-2 text-left font-semibold text-slate-600">Cliente</th>
+            <th class="px-3 py-2 text-center font-semibold text-slate-600">Asignado</th>
+            <th class="px-3 py-2 text-center font-semibold text-slate-600">Consumido</th>
+            <th class="px-3 py-2 text-center font-semibold text-slate-600">Restante</th>
+            <th class="px-3 py-2 text-center font-semibold text-slate-600">Estado sesión</th>
+            <th class="px-3 py-2 text-center font-semibold text-slate-600">Pago</th>
+            <th class="px-3 py-2 text-right font-semibold text-slate-600">Total (S/)</th>
+            <th class="px-3 py-2 text-center font-semibold text-slate-600">Acciones</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr
+            *ngFor="let s of sesiones; let i = index"
+            class="border-b border-slate-100 hover:bg-slate-50"
+          >
+            <td class="px-3 py-2 text-xs font-mono text-slate-700">
+              {{ s.codigo }}
+            </td>
+            <td class="px-3 py-2">
+              <div class="text-sm font-medium text-slate-800">
+                {{ s.maquinaCodigo }}
+              </div>
+              <div class="text-xs text-slate-500">
+                {{ s.maquinaNombre }}
+              </div>
+            </td>
+            <td class="px-3 py-2">
+              <div class="text-sm font-medium text-slate-800">
+                {{ s.clienteNombre }}
+              </div>
+              <div class="text-xs text-slate-500">
+                DNI: {{ s.clienteDni }}
+              </div>
+            </td>
+
+            <td class="px-3 py-2 text-center text-xs text-slate-700">
+              {{ s.minutosAsignados }} min
+            </td>
+            <td class="px-3 py-2 text-center text-xs text-slate-700">
+              {{ s.minutosConsumidos }} min
+            </td>
+            <td
+              class="px-3 py-2 text-center text-xs font-semibold"
+              [ngClass]="s.minutosRestantes <= 5 ? 'text-red-500' : 'text-emerald-600'"
+            >
+              {{ s.minutosRestantes }} min
+            </td>
+
+            <!-- Estado de sesión -->
+            <td class="px-3 py-2 text-center">
+                <span
+                  class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium"
+                  [ngClass]="{
+                    'bg-emerald-100 text-emerald-700': s.estado === 'EN_CURSO',
+                    'bg-slate-100 text-slate-700': s.estado === 'FINALIZADA',
+                    'bg-red-100 text-red-700': s.estado === 'CANCELADA'
+                  }"
+                >
+                  {{ s.estado }}
+                </span>
+            </td>
+
+            <!-- Estado de pago -->
+            <td class="px-3 py-2 text-center">
+                <span
+                  class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium"
+                  [ngClass]="{
+                    'bg-yellow-100 text-yellow-700': s.estadoPago === 'PENDIENTE',
+                    'bg-emerald-100 text-emerald-700': s.estadoPago === 'PAGADO',
+                    'bg-red-100 text-red-700': s.estadoPago === 'ANULADO' || s.estadoPago === 'PENDIENTE_INTEGRACION'
+                  }"
+                >
+                  {{ s.estadoPago || 'N/A' }}
+                </span>
+            </td>
+
+            <!-- Total -->
+            <td class="px-3 py-2 text-right text-xs font-semibold text-slate-800">
+              {{ s.totalCalculado | number: '1.2-2' }}
+            </td>
+
+            <!-- Acciones -->
+            <td class="px-3 py-2 text-center">
+              <div class="flex items-center justify-center gap-2">
+                <button
+                  class="rounded-lg bg-indigo-500 px-2.5 py-1 text-xs font-medium text-white hover:bg-indigo-600 disabled:bg-slate-300 disabled:text-slate-500"
+                  (click)="finalizarSesion(s)"
+                  [disabled]="s.estado !== 'EN_CURSO'"
+                >
+                  Finalizar
+                </button>
+                <button
+                  class="rounded-lg bg-slate-200 px-2.5 py-1 text-xs font-medium text-slate-800 hover:bg-slate-300 disabled:bg-slate-100 disabled:text-slate-400"
+                  (click)="cancelarSesion(s)"
+                  [disabled]="s.estado !== 'EN_CURSO'"
+                >
+                  Cancelar
+                </button>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Si no hay sesiones -->
+          <tr *ngIf="!loading && sesiones.length === 0">
+            <td colspan="10" class="px-3 py-6 text-center text-sm text-slate-500">
+              No hay sesiones registradas.
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </main>
+</div>
