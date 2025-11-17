@@ -43,4 +43,10 @@ public class Sesion {
     private EstadoSesion estado = EstadoSesion.EN_CURSO;
 
     private LocalDateTime fechaRegistro = LocalDateTime.now();
+
+    /** >>> NUEVO: relación lógica con el pago en ms-pago <<< */
+    private Long pagoId; // ID del pago registrado en ms-pago
+
+    @Column(length = 15)
+    private String estadoPago; // PENDIENTE / PAGADO / ANULADO
 }

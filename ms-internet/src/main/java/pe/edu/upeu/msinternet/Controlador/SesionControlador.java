@@ -7,10 +7,13 @@ import pe.edu.upeu.msinternet.Dto.SesionCrearDto;
 import pe.edu.upeu.msinternet.Dto.SesionDto;
 import pe.edu.upeu.msinternet.Servicio.SesionServicio;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/sesiones")
 @RequiredArgsConstructor
 public class SesionControlador {
+
     private final SesionServicio servicio;
 
     @PostMapping("/iniciar")
@@ -19,12 +22,21 @@ public class SesionControlador {
     }
 
     @PutMapping("/{codigo}/finalizar")
-    public ResponseEntity<SesionDto> finalizar(@PathVariable String codigo, @RequestParam String metodoPago){
+    public ResponseEntity<SesionDto> finalizar(
+            @PathVariable String codigo,
+            @RequestParam String metodoPago
+    ){
         return ResponseEntity.ok(servicio.finalizar(codigo, metodoPago));
     }
 
     @PutMapping("/{codigo}/cancelar")
     public ResponseEntity<SesionDto> cancelar(@PathVariable String codigo){
         return ResponseEntity.ok(servicio.cancelar(codigo));
+    }
+
+    /** Nuevo: listado de todas las sesiones para el panel del frontend */
+    @GetMapping
+    public ResponseEntity<List<SesionDto>> listar(){
+        return ResponseEntity.ok(servicio.listar());
     }
 }
