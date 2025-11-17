@@ -9,12 +9,22 @@ import { App } from './app';
 import { Login } from './auth/login/login';
 import { Dashboard } from './pages/dashboard/dashboard';
 import { authInterceptor } from './core/auth-interceptor';
+import {NuevaSesion} from './pages/nueva-sesion/nueva-sesion';
+import {ClientesPage} from './pages/clientes/clientes';
+import {MaquinasPage} from './pages/maquinas/maquinas';
+import {PagosPage} from './pages/pagos/pagos';
+import {MainLayout} from './pages/layout/main-layout';
 
 @NgModule({
   declarations: [
     App,
     Login,
-    Dashboard
+    Dashboard,
+    NuevaSesion,
+    ClientesPage,
+    MaquinasPage,
+    MainLayout,
+    PagosPage
   ],
   imports: [
     BrowserModule,
@@ -23,9 +33,7 @@ import { authInterceptor } from './core/auth-interceptor';
   ],
   providers: [
     provideBrowserGlobalErrorListeners(),
-    provideHttpClient(
-      withInterceptors([authInterceptor]) // 👈 aquí va la función
-    )
+    provideHttpClient(withInterceptors([authInterceptor]))
   ],
   bootstrap: [App]
 })

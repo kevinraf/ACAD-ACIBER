@@ -39,4 +39,9 @@ public class SesionControlador {
     public ResponseEntity<List<SesionDto>> listar(){
         return ResponseEntity.ok(servicio.listar());
     }
+    /** 🔹 Nuevo: confirmar pago de la sesión */
+    @PutMapping("/{codigo}/confirmar-pago")
+    public ResponseEntity<SesionDto> confirmarPago(@PathVariable String codigo) {
+        return ResponseEntity.ok(servicio.confirmarPagoSesion(codigo));
+    }
 }

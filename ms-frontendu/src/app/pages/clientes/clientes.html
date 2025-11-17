@@ -1,0 +1,132 @@
+<div class="min-h-screen bg-slate-100 flex flex-col">
+  <header class="w-full bg-white border-b border-slate-200">
+    <div class="max-w-5xl mx-auto px-4 py-3">
+      <h1 class="text-xl font-semibold text-slate-800">
+        Gestión de clientes
+      </h1>
+      <p class="text-sm text-slate-500">
+        Registra y administra los clientes del servicio de cabinas.
+      </p>
+    </div>
+  </header>
+
+  <main class="flex-1 w-full">
+    <div class="max-w-5xl mx-auto px-4 py-6 space-y-4">
+
+      <div *ngIf="error" class="rounded-lg bg-red-50 border border-red-200 px-3 py-2 text-sm text-red-700">
+        {{ error }}
+      </div>
+
+      <!-- Formulario nuevo cliente -->
+      <section class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 space-y-4">
+        <h2 class="text-sm font-semibold text-slate-700">
+          Nuevo cliente
+        </h2>
+
+        <div class="grid md:grid-cols-2 gap-4">
+          <div class="space-y-1.5">
+            <label class="block text-xs font-medium text-slate-600">
+              DNI *
+            </label>
+            <input
+              [(ngModel)]="nuevo.dni"
+              name="dni"
+              maxlength="15"
+              class="w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 text-sm
+                     focus:outline-none focus:ring-2 focus:ring-sky-500 focus:bg-white"
+              placeholder="12345678" />
+          </div>
+
+          <div class="space-y-1.5">
+            <label class="block text-xs font-medium text-slate-600">
+              Nombre completo *
+            </label>
+            <input
+              [(ngModel)]="nuevo.nombreCompleto"
+              name="nombreCompleto"
+              class="w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 text-sm
+                     focus:outline-none focus:ring-2 focus:ring-sky-500 focus:bg-white"
+              placeholder="Juan Pérez" />
+          </div>
+
+          <div class="space-y-1.5">
+            <label class="block text-xs font-medium text-slate-600">
+              Teléfono
+            </label>
+            <input
+              [(ngModel)]="nuevo.telefono"
+              name="telefono"
+              class="w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 text-sm
+                     focus:outline-none focus:ring-2 focus:ring-sky-500 focus:bg-white"
+              placeholder="987654321" />
+          </div>
+
+          <div class="space-y-1.5">
+            <label class="block text-xs font-medium text-slate-600">
+              Correo
+            </label>
+            <input
+              [(ngModel)]="nuevo.correo"
+              name="correo"
+              type="email"
+              class="w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 text-sm
+                     focus:outline-none focus:ring-2 focus:ring-sky-500 focus:bg-white"
+              placeholder="cliente@correo.com" />
+          </div>
+        </div>
+
+        <div class="pt-2">
+          <button
+            type="button"
+            (click)="guardar()"
+            class="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700">
+            Guardar cliente
+          </button>
+        </div>
+      </section>
+
+      <!-- Tabla de clientes -->
+      <section class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="px-4 py-3 border-b border-slate-200 flex items-center justify-between">
+          <h2 class="text-sm font-semibold text-slate-700">
+            Lista de clientes
+          </h2>
+          <span class="text-xs text-slate-500">
+            {{ clientes.length }} registros
+          </span>
+        </div>
+
+        <table class="min-w-full text-sm">
+          <thead class="bg-slate-50 border-b border-slate-200">
+          <tr>
+            <th class="px-3 py-2 text-left font-semibold text-slate-600">DNI</th>
+            <th class="px-3 py-2 text-left font-semibold text-slate-600">Nombre</th>
+            <th class="px-3 py-2 text-left font-semibold text-slate-600">Teléfono</th>
+            <th class="px-3 py-2 text-left font-semibold text-slate-600">Correo</th>
+            <th class="px-3 py-2 text-center font-semibold text-slate-600">Horas acum.</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr
+            *ngFor="let c of clientes"
+            class="border-b border-slate-100 hover:bg-slate-50">
+            <td class="px-3 py-2 text-xs font-mono text-slate-700">{{ c.dni }}</td>
+            <td class="px-3 py-2 text-sm text-slate-800">{{ c.nombreCompleto }}</td>
+            <td class="px-3 py-2 text-xs text-slate-700">{{ c.telefono || '—' }}</td>
+            <td class="px-3 py-2 text-xs text-slate-700">{{ c.correo || '—' }}</td>
+            <td class="px-3 py-2 text-center text-xs text-slate-700">
+              {{ c.horasAcumuladas || 0 }}
+            </td>
+          </tr>
+
+          <tr *ngIf="!loading && clientes.length === 0">
+            <td colspan="5" class="px-3 py-6 text-center text-sm text-slate-500">
+              No hay clientes registrados.
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </section>
+    </div>
+  </main>
+</div>

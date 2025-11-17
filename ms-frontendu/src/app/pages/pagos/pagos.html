@@ -1,0 +1,100 @@
+<div class="min-h-screen bg-slate-100 flex flex-col">
+  <header class="w-full bg-white border-b border-slate-200">
+    <div class="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
+      <div>
+        <h1 class="text-xl font-semibold text-slate-800">
+          Historial de pagos
+        </h1>
+        <p class="text-sm text-slate-500">
+          Revisa los pagos registrados desde las sesiones de cabinas.
+        </p>
+      </div>
+      <div class="text-right">
+        <div class="text-xs text-slate-500">
+          Total cobrado
+        </div>
+        <div class="text-sm font-semibold text-slate-800">
+          S/ {{ total() | number:'1.2-2' }}
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-1 w-full">
+    <div class="max-w-5xl mx-auto px-4 py-6 space-y-4">
+
+      <div *ngIf="error" class="rounded-lg bg-red-50 border border-red-200 px-3 py-2 text-sm text-red-700">
+        {{ error }}
+      </div>
+
+      <section class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="px-4 py-3 border-b border-slate-200 flex items-center justify-between">
+          <h2 class="text-sm font-semibold text-slate-700">
+            Pagos registrados
+          </h2>
+          <button
+            type="button"
+            (click)="cargar()"
+            class="rounded-lg border border-slate-300 px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50">
+            Refrescar
+          </button>
+        </div>
+
+        <table class="min-w-full text-sm">
+          <thead class="bg-slate-50 border-b border-slate-200">
+          <tr>
+            <th class="px-3 py-2 text-left font-semibold text-slate-600">Código sesión</th>
+            <th class="px-3 py-2 text-left font-semibold text-slate-600">Máquina</th>
+            <th class="px-3 py-2 text-left font-semibold text-slate-600">Cliente DNI</th>
+            <th class="px-3 py-2 text-right font-semibold text-slate-600">Monto (S/)</th>
+            <th class="px-3 py-2 text-center font-semibold text-slate-600">Método</th>
+            <th class="px-3 py-2 text-center font-semibold text-slate-600">Estado</th>
+            <th class="px-3 py-2 text-left font-semibold text-slate-600">Fecha</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr
+            *ngFor="let p of pagos"
+            class="border-b border-slate-100 hover:bg-slate-50">
+            <td class="px-3 py-2 text-xs font-mono text-slate-700">
+              {{ p.codigoSesion }}
+            </td>
+            <td class="px-3 py-2 text-xs text-slate-800">
+              {{ p.maquinaCodigo }}
+            </td>
+            <td class="px-3 py-2 text-xs text-slate-800">
+              {{ p.clienteDni }}
+            </td>
+            <td class="px-3 py-2 text-right text-xs font-semibold text-slate-800">
+              {{ p.monto | number:'1.2-2' }}
+            </td>
+            <td class="px-3 py-2 text-center text-xs text-slate-700">
+              {{ p.metodoPago }}
+            </td>
+            <td class="px-3 py-2 text-center">
+              <span
+                class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium"
+                [ngClass]="{
+                  'bg-yellow-100 text-yellow-700': p.estado === 'PENDIENTE',
+                  'bg-emerald-100 text-emerald-700': p.estado === 'PAGADO',
+                  'bg-red-100 text-red-700': p.estado === 'ANULADO'
+                }">
+                {{ p.estado }}
+              </span>
+            </td>
+            <td class="px-3 py-2 text-xs text-slate-600">
+              {{ p.fechaPago | date:'short' }}
+            </td>
+          </tr>
+
+          <tr *ngIf="!loading && pagos.length === 0">
+            <td colspan="7" class="px-3 py-6 text-center text-sm text-slate-500">
+              No hay pagos registrados.
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </section>
+    </div>
+  </main>
+</div>

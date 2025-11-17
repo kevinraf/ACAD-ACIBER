@@ -167,4 +167,21 @@ public class SesionServicioImpl implements SesionServicio {
 
         return d;
     }
+    @Override
+    public SesionDto confirmarPagoSesion(String codigoSesion) {
+        Sesion s = sesionRepo.findByCodigo(codigoSesion).orElseThrow();
+
+        if (s.getPagoId() == null) {
+            throw new IllegalStateException("La sesión no tiene pago registrado");
+        }
+
+        // Llamamos a ms-pago para confirmar
+        PagoRespDTO pagoResp = pagoFeign.confirmarPago(s.getPagoId());
+
+        if (pagoResp != null && pagoResp.getEstado() != null) {
+            s.setEstadoPago(pagoResp.getEstado()); // PASA A PAGADO (o lo que devuelva)
+        }
+
+        return toDto(s);
+    }
 }

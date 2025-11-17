@@ -1,0 +1,158 @@
+<div class="min-h-screen bg-slate-100 flex flex-col">
+  <header class="w-full bg-white border-b border-slate-200">
+    <div class="max-w-5xl mx-auto px-4 py-3">
+      <h1 class="text-xl font-semibold text-slate-800">
+        Gestión de máquinas
+      </h1>
+      <p class="text-sm text-slate-500">
+        Administra las cabinas disponibles, su estado y tarifa por hora.
+      </p>
+    </div>
+  </header>
+
+  <main class="flex-1 w-full">
+    <div class="max-w-5xl mx-auto px-4 py-6 space-y-4">
+
+      <div *ngIf="error" class="rounded-lg bg-red-50 border border-red-200 px-3 py-2 text-sm text-red-700">
+        {{ error }}
+      </div>
+
+      <!-- Form nueva máquina -->
+      <section class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 space-y-4">
+        <h2 class="text-sm font-semibold text-slate-700">
+          Registrar nueva máquina
+        </h2>
+
+        <div class="grid md:grid-cols-2 gap-4">
+          <div class="space-y-1.5">
+            <label class="block text-xs font-medium text-slate-600">
+              Código *
+            </label>
+            <input
+              [(ngModel)]="nueva.codigo"
+              name="codigo"
+              class="w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 text-sm
+                     focus:outline-none focus:ring-2 focus:ring-sky-500 focus:bg-white"
+              placeholder="PC01" />
+          </div>
+
+          <div class="space-y-1.5">
+            <label class="block text-xs font-medium text-slate-600">
+              Nombre *
+            </label>
+            <input
+              [(ngModel)]="nueva.nombre"
+              name="nombre"
+              class="w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 text-sm
+                     focus:outline-none focus:ring-2 focus:ring-sky-500 focus:bg-white"
+              placeholder="Máquina 01" />
+          </div>
+
+          <div class="space-y-1.5">
+            <label class="block text-xs font-medium text-slate-600">
+              Costo por hora (S/)
+            </label>
+            <input
+              type="number"
+              step="0.1"
+              [(ngModel)]="nueva.costoHora"
+              name="costoHora"
+              class="w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 text-sm
+                     focus:outline-none focus:ring-2 focus:ring-sky-500 focus:bg-white" />
+          </div>
+
+          <div class="space-y-1.5 md:col-span-2">
+            <label class="block text-xs font-medium text-slate-600">
+              Descripción
+            </label>
+            <textarea
+              [(ngModel)]="nueva.descripcion"
+              name="descripcion"
+              rows="2"
+              class="w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 text-sm
+                     focus:outline-none focus:ring-2 focus:ring-sky-500 focus:bg-white"
+              placeholder="Ubicación, características, etc."></textarea>
+          </div>
+        </div>
+
+        <div class="pt-2">
+          <button
+            type="button"
+            (click)="guardar()"
+            class="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700">
+            Guardar máquina
+          </button>
+        </div>
+      </section>
+
+      <!-- Tabla -->
+      <section class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+        <div class="px-4 py-3 border-b border-slate-200 flex items-center justify-between">
+          <h2 class="text-sm font-semibold text-slate-700">
+            Máquinas registradas
+          </h2>
+          <span class="text-xs text-slate-500">
+            {{ maquinas.length }} máquinas
+          </span>
+        </div>
+
+        <table class="min-w-full text-sm">
+          <thead class="bg-slate-50 border-b border-slate-200">
+          <tr>
+            <th class="px-3 py-2 text-left font-semibold text-slate-600">Código</th>
+            <th class="px-3 py-2 text-left font-semibold text-slate-600">Nombre</th>
+            <th class="px-3 py-2 text-center font-semibold text-slate-600">Estado</th>
+            <th class="px-3 py-2 text-right font-semibold text-slate-600">Costo /h</th>
+            <th class="px-3 py-2 text-center font-semibold text-slate-600">Acciones</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr
+            *ngFor="let m of maquinas"
+            class="border-b border-slate-100 hover:bg-slate-50">
+            <td class="px-3 py-2 text-xs font-mono text-slate-700">{{ m.codigo }}</td>
+            <td class="px-3 py-2 text-sm text-slate-800">{{ m.nombre }}</td>
+            <td class="px-3 py-2 text-center">
+              <span
+                class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium"
+                [ngClass]="{
+                  'bg-emerald-100 text-emerald-700': m.estado === 'LIBRE',
+                  'bg-sky-100 text-sky-700': m.estado === 'OCUPADA',
+                  'bg-amber-100 text-amber-700': m.estado === 'MANTENIMIENTO',
+                  'bg-red-100 text-red-700': m.estado === 'BLOQUEADA'
+                }">
+                {{ m.estado }}
+              </span>
+            </td>
+            <td class="px-3 py-2 text-right text-xs text-slate-800">
+              {{ m.costoHora | number:'1.2-2' }}
+            </td>
+            <td class="px-3 py-2 text-center">
+              <div class="flex items-center justify-center gap-2">
+                <button
+                  type="button"
+                  class="rounded-lg bg-slate-200 px-2.5 py-1 text-xs font-medium text-slate-800 hover:bg-slate-300"
+                  (click)="bloquear(m)">
+                  Bloquear
+                </button>
+                <button
+                  type="button"
+                  class="rounded-lg bg-indigo-500 px-2.5 py-1 text-xs font-medium text-white hover:bg-indigo-600"
+                  (click)="liberar(m)">
+                  Liberar
+                </button>
+              </div>
+            </td>
+          </tr>
+
+          <tr *ngIf="!loading && maquinas.length === 0">
+            <td colspan="5" class="px-3 py-6 text-center text-sm text-slate-500">
+              No hay máquinas registradas.
+            </td>
+          </tr>
+          </tbody>
+        </table>
+      </section>
+    </div>
+  </main>
+</div>

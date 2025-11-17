@@ -11,12 +11,14 @@
         </p>
       </div>
 
-      <button
-        class="inline-flex items-center gap-2 rounded-lg bg-red-500 px-3 py-1.5 text-sm font-medium text-white hover:bg-red-600 transition"
-        (click)="logout()"
-      >
-        Cerrar sesión
-      </button>
+      <div class="text-right">
+        <div class="text-xs text-slate-500">
+          Total en curso
+        </div>
+        <div class="text-sm font-semibold text-slate-800">
+          S/ {{ totalEnCurso() | number:'1.2-2' }}
+        </div>
+      </div>
     </div>
   </header>
 
@@ -24,7 +26,7 @@
   <main class="flex-1 w-full">
     <div class="max-w-6xl mx-auto px-4 py-6 space-y-4">
 
-      <!-- Filtros / acciones generales -->
+      <!-- Filtros / acciones -->
       <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 flex flex-wrap items-center justify-between gap-3">
         <div class="space-y-1">
           <h2 class="text-sm font-semibold text-slate-700">
@@ -43,8 +45,7 @@
             <select
               [(ngModel)]="metodoPago"
               name="metodoPagoGlobal"
-              class="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            >
+              class="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
               <option *ngFor="let m of metodosPago" [value]="m">
                 {{ m }}
               </option>
@@ -53,16 +54,21 @@
 
           <button
             class="rounded-lg border border-slate-300 px-3 py-1.5 text-sm text-slate-700 hover:bg-slate-50"
-            (click)="cargarSesiones()"
-          >
+            (click)="cargarSesiones()">
             Refrescar
+          </button>
+
+          <button
+            class="rounded-lg bg-sky-600 px-3 py-1.5 text-sm text-white hover:bg-sky-700"
+            (click)="navegar('/sesiones/nueva')">
+            + Nueva sesión
           </button>
         </div>
       </div>
 
       <!-- Mensajes de estado -->
       <div *ngIf="loading" class="text-sm text-slate-600">
-        Cargando sesiones...
+        Procesando...
       </div>
 
       <div *ngIf="error" class="text-sm text-red-500">
@@ -88,9 +94,8 @@
           </thead>
           <tbody>
           <tr
-            *ngFor="let s of sesiones; let i = index"
-            class="border-b border-slate-100 hover:bg-slate-50"
-          >
+            *ngFor="let s of sesiones"
+            class="border-b border-slate-100 hover:bg-slate-50">
             <td class="px-3 py-2 text-xs font-mono text-slate-700">
               {{ s.codigo }}
             </td>
@@ -119,66 +124,56 @@
             </td>
             <td
               class="px-3 py-2 text-center text-xs font-semibold"
-              [ngClass]="s.minutosRestantes <= 5 ? 'text-red-500' : 'text-emerald-600'"
-            >
+              [ngClass]="s.minutosRestantes <= 5 ? 'text-red-500' : 'text-emerald-600'">
               {{ s.minutosRestantes }} min
             </td>
 
-            <!-- Estado de sesión -->
             <td class="px-3 py-2 text-center">
-                <span
-                  class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium"
-                  [ngClass]="{
-                    'bg-emerald-100 text-emerald-700': s.estado === 'EN_CURSO',
-                    'bg-slate-100 text-slate-700': s.estado === 'FINALIZADA',
-                    'bg-red-100 text-red-700': s.estado === 'CANCELADA'
-                  }"
-                >
-                  {{ s.estado }}
-                </span>
+              <span
+                class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium"
+                [ngClass]="{
+                  'bg-emerald-100 text-emerald-700': s.estado === 'EN_CURSO',
+                  'bg-slate-100 text-slate-700': s.estado === 'FINALIZADA',
+                  'bg-red-100 text-red-700': s.estado === 'CANCELADA'
+                }">
+                {{ s.estado }}
+              </span>
             </td>
 
-            <!-- Estado de pago -->
             <td class="px-3 py-2 text-center">
-                <span
-                  class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium"
-                  [ngClass]="{
-                    'bg-yellow-100 text-yellow-700': s.estadoPago === 'PENDIENTE',
-                    'bg-emerald-100 text-emerald-700': s.estadoPago === 'PAGADO',
-                    'bg-red-100 text-red-700': s.estadoPago === 'ANULADO' || s.estadoPago === 'PENDIENTE_INTEGRACION'
-                  }"
-                >
-                  {{ s.estadoPago || 'N/A' }}
-                </span>
+              <span
+                class="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium"
+                [ngClass]="{
+                  'bg-yellow-100 text-yellow-700': s.estadoPago === 'PENDIENTE',
+                  'bg-emerald-100 text-emerald-700': s.estadoPago === 'PAGADO',
+                  'bg-red-100 text-red-700': s.estadoPago === 'ANULADO' || s.estadoPago === 'PENDIENTE_INTEGRACION'
+                }">
+                {{ s.estadoPago || 'N/A' }}
+              </span>
             </td>
 
-            <!-- Total -->
             <td class="px-3 py-2 text-right text-xs font-semibold text-slate-800">
-              {{ s.totalCalculado | number: '1.2-2' }}
+              {{ s.totalCalculado | number:'1.2-2' }}
             </td>
 
-            <!-- Acciones -->
             <td class="px-3 py-2 text-center">
               <div class="flex items-center justify-center gap-2">
                 <button
                   class="rounded-lg bg-indigo-500 px-2.5 py-1 text-xs font-medium text-white hover:bg-indigo-600 disabled:bg-slate-300 disabled:text-slate-500"
-                  (click)="finalizarSesion(s)"
-                  [disabled]="s.estado !== 'EN_CURSO'"
-                >
+                  (click)="abrirModalFinalizar(s)"
+                  [disabled]="s.estado !== 'EN_CURSO'">
                   Finalizar
                 </button>
                 <button
                   class="rounded-lg bg-slate-200 px-2.5 py-1 text-xs font-medium text-slate-800 hover:bg-slate-300 disabled:bg-slate-100 disabled:text-slate-400"
                   (click)="cancelarSesion(s)"
-                  [disabled]="s.estado !== 'EN_CURSO'"
-                >
+                  [disabled]="s.estado !== 'EN_CURSO'">
                   Cancelar
                 </button>
               </div>
             </td>
           </tr>
 
-          <!-- Si no hay sesiones -->
           <tr *ngIf="!loading && sesiones.length === 0">
             <td colspan="10" class="px-3 py-6 text-center text-sm text-slate-500">
               No hay sesiones registradas.
@@ -190,4 +185,137 @@
 
     </div>
   </main>
+</div>
+
+<!-- 🔹 MODAL FINALIZAR + BOLETITA -->
+<div
+  *ngIf="mostrarModalFinalizar && sesionSeleccionada"
+  class="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
+>
+  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4 p-5 space-y-4">
+
+    <!-- Título -->
+    <div class="flex items-start justify-between">
+      <div>
+        <h2 class="text-sm font-semibold text-slate-800" *ngIf="!sesionComprobante">
+          Finalizar sesión
+        </h2>
+        <h2 class="text-sm font-semibold text-slate-800" *ngIf="sesionComprobante">
+          Comprobante de sesión
+        </h2>
+        <p class="text-[11px] text-slate-500">
+          {{ sesionSeleccionada.maquinaCodigo }} – {{ sesionSeleccionada.clienteNombre }}
+        </p>
+      </div>
+      <div class="text-[11px] font-mono text-slate-400">
+        {{ sesionSeleccionada.codigo }}
+      </div>
+    </div>
+
+    <!-- Paso 1: resumen antes de finalizar -->
+    <ng-container *ngIf="!sesionComprobante">
+      <div class="border rounded-xl px-3 py-3 bg-slate-50 space-y-2 text-xs text-slate-700">
+        <div class="flex justify-between">
+          <span class="font-semibold">Cliente:</span>
+          <span>{{ sesionSeleccionada.clienteNombre }} ({{ sesionSeleccionada.clienteDni }})</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="font-semibold">Máquina:</span>
+          <span>{{ sesionSeleccionada.maquinaCodigo }} – {{ sesionSeleccionada.maquinaNombre }}</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="font-semibold">Tiempo asignado:</span>
+          <span>{{ sesionSeleccionada.minutosAsignados }} min</span>
+        </div>
+
+        <div class="pt-2 border-t border-slate-200 mt-1 flex items-center justify-between gap-2">
+          <span class="text-[11px] text-slate-500">
+            Método de pago a usar:
+          </span>
+          <select
+            [(ngModel)]="metodoPagoModal"
+            name="metodoPagoModal"
+            class="rounded-lg border border-slate-300 bg-white px-2 py-1 text-xs focus:outline-none focus:ring-2 focus:ring-emerald-500">
+            <option *ngFor="let m of metodosPago" [value]="m">{{ m }}</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between pt-2">
+        <button
+          type="button"
+          (click)="cerrarModalFinalizar()"
+          class="rounded-lg border border-slate-300 px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50">
+          Cancelar
+        </button>
+
+        <button
+          type="button"
+          (click)="ejecutarFinalizacion()"
+          [disabled]="loading"
+          class="rounded-lg bg-indigo-600 px-4 py-1.5 text-xs font-semibold text-white hover:bg-indigo-700 disabled:bg-slate-300">
+          {{ loading ? 'Finalizando...' : 'Finalizar sesión' }}
+        </button>
+      </div>
+    </ng-container>
+
+    <!-- Paso 2: boleta + confirmar pago -->
+    <ng-container *ngIf="sesionComprobante">
+      <div class="border rounded-xl px-3 py-3 bg-slate-50 space-y-1 text-xs text-slate-700">
+        <div class="flex justify-between">
+          <span class="font-semibold">Cliente:</span>
+          <span>{{ sesionComprobante.clienteNombre }} ({{ sesionComprobante.clienteDni }})</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="font-semibold">Máquina:</span>
+          <span>{{ sesionComprobante.maquinaCodigo }} – {{ sesionComprobante.maquinaNombre }}</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="font-semibold">Tiempo usado:</span>
+          <span>{{ sesionComprobante.minutosConsumidos }} min de {{ sesionComprobante.minutosAsignados }} min</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="font-semibold">Tarifa / hora:</span>
+          <span>S/ {{ sesionComprobante.costoHora | number:'1.2-2' }}</span>
+        </div>
+        <div class="flex justify-between">
+          <span class="font-semibold">Total a pagar:</span>
+          <span class="font-semibold text-slate-900">
+            S/ {{ sesionComprobante.totalCalculado | number:'1.2-2' }}
+          </span>
+        </div>
+        <div class="flex justify-between">
+          <span class="font-semibold">Estado pago:</span>
+          <span class="uppercase">
+            {{ sesionComprobante.estadoPago || 'PENDIENTE' }}
+          </span>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-between pt-2">
+        <button
+          type="button"
+          (click)="cerrarModalFinalizar()"
+          class="rounded-lg border border-slate-300 px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50">
+          Cerrar
+        </button>
+
+        <ng-container *ngIf="sesionComprobante.estadoPago !== 'PAGADO'; else pagoListo">
+          <button
+            type="button"
+            (click)="confirmarPagoSesion()"
+            [disabled]="loading"
+            class="rounded-lg bg-emerald-600 px-4 py-1.5 text-xs font-semibold text-white hover:bg-emerald-700 disabled:bg-slate-300">
+            {{ loading ? 'Confirmando...' : 'Confirmar pago' }}
+          </button>
+        </ng-container>
+
+        <ng-template #pagoListo>
+          <div class="flex items-center gap-1 text-xs font-semibold text-emerald-600">
+            ✅ Pago confirmado
+          </div>
+        </ng-template>
+      </div>
+    </ng-container>
+  </div>
 </div>

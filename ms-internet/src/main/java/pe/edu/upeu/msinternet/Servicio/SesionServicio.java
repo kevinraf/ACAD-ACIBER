@@ -10,6 +10,9 @@ public interface SesionServicio {
     SesionDto finalizar(String codigoSesion, String metodoPago); // EFECTIVO/YAPE...
     SesionDto cancelar(String codigoSesion);
 
-    /** Nuevo: listar todas las sesiones para el panel del frontend */
+    /** Listar todas las sesiones para el panel del frontend */
     List<SesionDto> listar();
+
+    /** 🔹 Nuevo: confirmar el pago asociado a la sesión */
+    SesionDto confirmarPagoSesion(String codigoSesion);
 }

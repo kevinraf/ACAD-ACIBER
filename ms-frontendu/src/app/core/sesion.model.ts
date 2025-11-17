@@ -1,5 +1,5 @@
 export interface Sesion {
-  id: number;
+  id?: number;
   codigo: string;
 
   maquinaCodigo: string;
@@ -12,10 +12,11 @@ export interface Sesion {
   minutosConsumidos: number;
   minutosRestantes: number;
 
-  estado: string;
+  estado: string;          // EN_CURSO, FINALIZADA, CANCELADA
   costoHora: number;
   totalCalculado: number;
 
+  // 🔹 campos del pago
   pagoId?: number;
   estadoPago?: string;
   pagado?: boolean;

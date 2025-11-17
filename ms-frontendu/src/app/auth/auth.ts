@@ -18,7 +18,7 @@ export class AuthService {
   constructor(private http: HttpClient) {}
 
   login(userName: string, password: string): Observable<TokenDto> {
-    const url = `${environment.apiUrl}/auth/login`; // 👈 lo dejamos así
+    const url = `${environment.apiUrlauth}/auth/login`; // 👈 lo dejamos así
     return this.http.post<TokenDto>(url, { userName, password }).pipe(
       tap(res => {
         if (res && res.token) {

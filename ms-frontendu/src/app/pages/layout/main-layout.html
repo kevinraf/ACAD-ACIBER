@@ -1,0 +1,66 @@
+<div class="min-h-screen bg-slate-100 flex">
+
+  <!-- Sidebar -->
+  <aside class="w-60 bg-slate-900 text-slate-100 flex flex-col">
+    <div class="px-4 py-4 border-b border-slate-800">
+      <div class="text-sm font-semibold">Cabinas UPeU</div>
+      <div class="text-[11px] text-slate-400">Panel de administración</div>
+    </div>
+
+    <nav class="flex-1 px-2 py-4 space-y-1 text-sm">
+      <a
+        routerLink="/dashboard"
+        routerLinkActive="bg-slate-800 text-white"
+        class="flex items-center gap-2 px-3 py-2 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white cursor-pointer">
+        <span>📊</span>
+        <span>Sesiones</span>
+      </a>
+
+      <a
+        routerLink="/sesiones/nueva"
+        routerLinkActive="bg-slate-800 text-white"
+        class="flex items-center gap-2 px-3 py-2 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white cursor-pointer">
+        <span>➕</span>
+        <span>Nueva sesión</span>
+      </a>
+
+      <a
+        routerLink="/clientes"
+        routerLinkActive="bg-slate-800 text-white"
+        class="flex items-center gap-2 px-3 py-2 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white cursor-pointer">
+        <span>👤</span>
+        <span>Clientes</span>
+      </a>
+
+      <a
+        routerLink="/maquinas"
+        routerLinkActive="bg-slate-800 text-white"
+        class="flex items-center gap-2 px-3 py-2 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white cursor-pointer">
+        <span>🖥</span>
+        <span>Máquinas</span>
+      </a>
+
+      <a
+        routerLink="/pagos"
+        routerLinkActive="bg-slate-800 text-white"
+        class="flex items-center gap-2 px-3 py-2 rounded-lg text-slate-300 hover:bg-slate-800 hover:text-white cursor-pointer">
+        <span>💳</span>
+        <span>Pagos</span>
+      </a>
+    </nav>
+
+    <div class="px-3 py-3 border-t border-slate-800">
+      <button
+        (click)="logout()"
+        class="w-full inline-flex items-center justify-center gap-2 rounded-lg bg-red-500 px-3 py-2 text-xs font-medium text-white hover:bg-red-600">
+        <span>Salir</span>
+      </button>
+    </div>
+  </aside>
+
+  <!-- Contenido -->
+  <main class="flex-1 flex flex-col">
+    <!-- Aquí cargan Dashboard, Nueva sesión, Clientes, etc -->
+    <router-outlet></router-outlet>
+  </main>
+</div>
