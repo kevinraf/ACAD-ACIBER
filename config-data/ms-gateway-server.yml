@@ -33,8 +33,6 @@ spring:
           uri: lb://ms-auth
           predicates:
             - Path=/auth/login,/auth/create
-          filters:
-            - StripPrefix=0
 
 
 
