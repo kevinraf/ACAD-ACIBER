@@ -2,15 +2,29 @@ server:
   port: ${PORT:${SERVERS_PORT:0}}
 
 spring:
-  jpa:
-    hibernate.ddl-auto: update
-    generate-ddl: true
-    show-sql: true
   datasource:
-    driverClassName: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/ms_auth
+    url: jdbc:h2:mem:ms_auth_db;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    driver-class-name: org.h2.Driver
     username: root
     password:
+
+    jpa:
+      hibernate:
+        ddl-auto: update
+      show-sql: true
+      database-platform: org.hibernate.dialect.H2Dialect
+
+    h2:
+      console:
+        enabled: true
+        path: /h2-console
+
+  springdoc:
+    api-docs:
+      enabled: true
+    swagger-ui:
+      enabled: true
+      path: /doc/swagger-ui.html
 
 eureka:
   client:

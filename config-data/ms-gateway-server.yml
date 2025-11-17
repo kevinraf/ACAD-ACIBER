@@ -7,18 +7,35 @@ spring:
 
   cloud:
     gateway:
+      # CORS GLOBAL PARA ANGULAR
+      globalcors:
+        add-to-simple-url-handler-mapping: true
+        corsConfigurations:
+          '[/**]':
+            allowedOrigins:
+              - "http://localhost:4200"
+            allowedMethods:
+              - GET
+              - POST
+              - PUT
+              - DELETE
+              - OPTIONS
+            allowedHeaders:
+              - "*"
+            allowCredentials: true
       discovery:
         locator:
           enabled: false
 
+
       routes:
         # === Auth (público) ===
-        - id: ms-auth
+        - id: ms-auth-public-auth
           uri: lb://ms-auth
           predicates:
-            - Path=/auth/**
+            - Path=/auth/login, /auth/create
           filters:
-            - StripPrefix=1
+            - StripPrefix=0
 
         # === INTERNET: DOCS/H2 PÚBLICO ===
         - id: ms-internet-docs
