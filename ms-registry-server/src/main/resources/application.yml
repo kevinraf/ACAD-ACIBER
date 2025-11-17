@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: ms-registry-server
+  profiles:
+    active: development
+  config:
+    import: optional:configserver:http://root:alan@localhost:7071
